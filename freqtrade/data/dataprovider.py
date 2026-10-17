@@ -118,7 +118,13 @@ class DataProvider:
         """
         return self.__producer_pairs.get(producer_name, []).copy()
 
-    def _emit_df(self, pair_key: PairWithTimeframe, dataframe: DataFrame, new_candle: bool) -> None:
+    def _emit_df(
+        self,
+        pair_key: PairWithTimeframe,
+        dataframe: DataFrame,
+        new_candle: bool,
+        incremental_updates: bool = True,
+    ) -> None:
         """
         Send this dataframe as an ANALYZED_DF message to RPC
 
@@ -131,7 +137,7 @@ class DataProvider:
                 "type": RPCMessageType.ANALYZED_DF,
                 "data": {
                     "key": pair_key,
-                    "df": dataframe.tail(1),
+                    "df": dataframe.tail(1) if incremental_updates else dataframe,
                     "la": datetime.now(UTC),
                 },
             }

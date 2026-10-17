@@ -1228,7 +1228,11 @@ class IStrategy(ABC, HyperStrategyMixin):
             self.__last_candle_seen_per_pair[pair] = last_date
             candle_type = self.config.get("candle_type_def", CandleType.SPOT)
             self.dp._set_cached_df(pair, self.timeframe, dataframe, candle_type=candle_type)
-            self.dp._emit_df((pair, self.timeframe, candle_type), dataframe, new_candle)
+            producer_config = self.config.get("external_message_producer", {})
+            incremental_updates = producer_config.get("incremental_updates", True) is True
+            self.dp._emit_df(
+                (pair, self.timeframe, candle_type), dataframe, new_candle, incremental_updates
+            )
 
         else:
             logger.debug("Skipping TA Analysis for already analyzed candle")
