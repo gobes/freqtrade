@@ -137,7 +137,7 @@ class DataProvider:
                 "type": RPCMessageType.ANALYZED_DF,
                 "data": {
                     "key": pair_key,
-                    "df": dataframe.tail(1) if incremental_updates else dataframe,
+                    "df": dataframe.tail(1) if incremental_updates else dataframe.copy(),
                     "la": datetime.now(UTC),
                 },
             }
